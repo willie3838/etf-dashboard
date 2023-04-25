@@ -23,7 +23,7 @@ ChartJS.register(
 
 const PRICES_ENDPOINT = 'http://localhost:3000/api/retrievePrice'
 
-export default function Graph() {
+export default function Graph({symbol}:{symbol: String}) {
     const [price, setPrice] = useState(0);
     const [chartData, setChartData] = useState([]);
     const [chartLabels, setChartLabels] = useState([]);
@@ -63,19 +63,28 @@ export default function Graph() {
         const resp = await fetch(PRICES_ENDPOINT);
         let priceData = await resp.json();
 
-        setPrice(priceData.latestPrice);
-        setChartLabels(priceData.timeSeries.map((timeData: any) => timeData.datetime as Date));
-        setChartData(priceData.timeSeries.map((timeData: any) => timeData.close as Number));
+        var etfData;
+        for (let i = 0; i < priceData.length; i++) {
+            if (priceData[i].symbol === symbol) {
+                etfData = priceData[i];
+            }
+        }
+        console.log("Symbol: ", symbol)
+        console.log("Etf data: ", etfData);
+
+        setPrice(etfData.latestPrice);
+        setChartLabels(etfData.timeSeries.map((timeData: any) => timeData.datetime as Date));
+        setChartData(etfData.timeSeries.map((timeData: any) => timeData.close as Number));
         console.log("Data: ", data.datasets[0].data);
         console.log("Labels: ", chartLabels);
-    }, 10090);
+    }, 8000);
 
     return () => clearInterval(interval);
     }, []);
 
     return (
-        <div className="flex min-h-screen flex-col items-center p-24">
-            <p>ETF price: {price}</p>
+        <div className="w-4/5 h-4/5 p-10">
+            <p className="text-center">{symbol} price: {price}</p>
             <Line
                 options={options}
                 data={data}

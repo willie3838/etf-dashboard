@@ -4,7 +4,8 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
       <p>ETF Dashboard</p>
-      <Graph/>      
+      <Graph symbol="VOO"/>    
+      <Graph symbol="QQQ"/>   
     </main>
   )
 }
