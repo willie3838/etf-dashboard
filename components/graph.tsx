@@ -10,6 +10,7 @@ import {
   } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { useEffect, useState } from 'react';
+import { ETF } from '@/pages/api/retrievePrice';
 
 ChartJS.register(
     CategoryScale,
@@ -21,9 +22,7 @@ ChartJS.register(
     Legend
 );
 
-const PRICES_ENDPOINT = 'http://localhost:3000/api/retrievePrice'
-
-export default function Graph({symbol}:{symbol: String}) {
+export default function Graph({symbol, priceData}:{symbol: String, priceData: ETF[]}) {
     const [price, setPrice] = useState(0);
     const [chartData, setChartData] = useState([]);
     const [chartLabels, setChartLabels] = useState([]);
@@ -58,29 +57,18 @@ export default function Graph({symbol}:{symbol: String}) {
         ],
     };
 
-    useEffect(() => {
-    const interval = setInterval(async () => {
-        const resp = await fetch(PRICES_ENDPOINT);
-        let priceData = await resp.json();
 
-        var etfData;
-        for (let i = 0; i < priceData.length; i++) {
+    useEffect(() => {
+        var etfData: ETF;
+        for(let i = 0; i < priceData.length; i++) {
             if (priceData[i].symbol === symbol) {
                 etfData = priceData[i];
+                setPrice(etfData!.latestPrice as number);
+                setChartLabels(etfData!.timeSeries.map((timeData: any) => timeData.datetime as Date) as never[]);
+                setChartData(etfData!.timeSeries.map((timeData: any) => timeData.close as Number) as never[]);
             }
         }
-        console.log("Symbol: ", symbol)
-        console.log("Etf data: ", etfData);
-
-        setPrice(etfData.latestPrice);
-        setChartLabels(etfData.timeSeries.map((timeData: any) => timeData.datetime as Date));
-        setChartData(etfData.timeSeries.map((timeData: any) => timeData.close as Number));
-        console.log("Data: ", data.datasets[0].data);
-        console.log("Labels: ", chartLabels);
-    }, 8000);
-
-    return () => clearInterval(interval);
-    }, []);
+    }, [priceData]);
 
     return (
         <div className="w-4/5 h-4/5 p-10">
