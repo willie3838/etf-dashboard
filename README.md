@@ -1,5 +1,9 @@
 ## ETF Dashboard
-This is an ETF dashboard that displays real-time ETF data. The project was made to help me 
-learn how to practically use multi-threading and rendering the frontend with real-time data. Since I'm limited by the API I'm using, the dashboard only updates every 30 seconds which can be improved if I upgraded to the paid version of the API.
+![Dashboard picture](./public/photo.png)
+This is a dashboard that tracks the prices of 5 ETFs: VOO, QQQ, VUG, and AVUV. The prices are shown in real-time - refreshes every 30 seconds due to API rate limiting constraints. I multithreaded the API calls to enable concurrent calls to the API rather than have them be sequential.
 
-The project was built using React, Next.js, and Tailwind.
+### Learnings
+The purpose of this project was to learn how to apply multithreading in a practical setting and learn how to create a frontend to handle real-time data. 
+
+### Technologies Used
+React, Typescript, Next.js, Node.js, and Tailwind.
